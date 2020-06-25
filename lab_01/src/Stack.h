@@ -1,86 +1,226 @@
-#pragma once
+#ifndef STACK_H
+#define STACK_H
+
 using namespace std;
+template<class T>
 
 class Stack
 {
 private:
-	int count = 0;
-	int size = 20;
-	int* Stack;
-	int* ptr = Stack;
+	unsigned int count { 0 };
+	unsigned int size { 20 };
+	T* Buffer;
 public:
-	void Buffer();
-	void push(int t1);
-	int pop();
-	int peek();
-	int countelement();
-	void sort();
-	void sortdiapazon(int start, int end);
+	Stack();
+	~Stack();
+	T pop();
+	T peek();
+	T scale();
+	void vyvod(int index);
+	void push(T t1);
+	void out();
+	void delete_minus_elements();
+	void delete_elements_in_diapason(int start, int end);
+
+
+	bool operator == (const Stack<T>& m2)
+	{
+		if (count == m2.count)
+		{
+			int i = count;
+			do
+			{
+				if (Buffer[i] != m2.Buffer[i]) return false;
+				i--;
+			} while ((Buffer[i] == m2.Buffer[i]) && (i != 0));
+			return true;
+		}
+		else return false;
+	};
+
+	bool operator !=(const Stack<T>& m2)
+	{
+		return !(*this == m2);
+	};
+
+	bool operator > (const Stack<T>& m2)
+	{
+		int i = count - 1;
+		int j = m2.count - 1;
+		if (count >= m2.count)
+		{
+			do
+			{
+				if (Buffer[i] < m2.Buffer[j]) return false;
+				else if (Buffer[i] > m2.Buffer[j]) return true;
+				i--;
+				j--;
+			} while ((Buffer[i] == m2.Buffer[j]) && (j != 0));
+			if (count > m2.count) return true;
+			else return false;
+		}
+		else
+		{
+			do
+			{
+				if (Buffer[i] < m2.Buffer[j]) return false;
+				else if (Buffer[i] > m2.Buffer[j]) return true;
+				i--;
+				j--;
+			} while ((Buffer[i] == m2.Buffer[j]) && (i != 0));
+			return false;
+		}
+
+	};
+
+	bool operator < (const Stack<T>& struct2)
+	{
+		int i = count - 1;
+		int j = struct2.count - 1;
+		if (count >= struct2.count)
+		{
+
+			do
+			{
+				if (Buffer[i] < struct2.Buffer[j]) return true;
+				else if (Buffer[i] > struct2.Buffer[i]) return false;
+				i--;
+				j--;
+			} while ((Buffer[i] == struct2.Buffer[i]) && (i != 0));
+			if (count > struct2.count) return false;
+			else return true;
+		}
+		else
+		{
+			do
+			{
+				if (Buffer[i] < struct2.Buffer[j]) return true;
+				else if (Buffer[i] > struct2.Buffer[j]) return false;
+				i--;
+				j--;
+			} while ((Buffer[i] == struct2.Buffer[j]) && (j != 0));
+			return true;
+		}
+
+	};
+
+	bool operator <= (const Stack<T>& m2)
+	{
+		return !(*this > m2);
+	};
+
+	bool operator >= (const Stack<T>& m2)
+	{
+		return !(*this < m2);
+	};
 };
 
-void Stack::Buffer()
+template<typename T>
+Stack<T>::Stack()
 {
-	Stack = new int[size];
+	Buffer = new T[size];
 };
 
-void Stack::push(int t1)
+template<typename T>
+Stack<T>::~Stack()
 {
-	Stack[count] = t1;
-	cout << Stack[count] << " ";
+	delete[] Buffer;
+};
+
+template<typename T>
+void Stack<T>::vyvod(int index)
+{
+	if (index > size)
+		throw std::range_error("No this element");
+	cout << Buffer[index] << " ";
+}
+
+template<typename T>
+void Stack<T>::push(T t1)
+{
+	if (size == count)
+		size++;
+	T* Array;
+	Array = new T[size];
+	for (int i = 0; i < size; i++)
+		Array[i] = Buffer[i];
+	delete[] Buffer; 
+	Array[count] = t1;
+	Buffer = Array;
 	count++;
 };
 
-int Stack::pop()
+template<typename T>
+void Stack<T>::out()
 {
-	if (size < 1)
-		throw std::range_error("Выход за пределы массива");
-	size--;
+	for (int i = 0; i < count; i++)
+		cout << Buffer[i] << " ";
+	cout << endl;
+};
+
+template<typename T>
+T Stack<T>::pop()
+{
+	if (size > 0)
+	{
+		size--;
+		T* Array;
+		Array = new T[size];
+		for (int i = 0; i < size; i++)
+			Array[i] = Buffer[i];
+		delete[] Buffer;
+		Buffer = Array;
+	}
+	else throw std::out_of_range("vector: empty");
 	count--;
-	return Stack[count];
+	return Buffer[count];
 };
 
-int Stack::peek()
+template<typename T>
+T Stack<T>::peek()
 {
-	return Stack[count];
+	if (count > 0)
+	{
+		return Buffer[count];
+	}
+	else throw std::out_of_range("stack: empty");
 };
 
-int Stack::countelement()
+template<typename T>
+T Stack<T>::scale()
 {
 	return count;
 };
 
-void Stack::sort()
+template<typename T>
+void Stack<T>::delete_minus_elements()
 {
 	for (int i = 0; i < count; i++)
 	{
-		if (Stack[i] < 0)
+		if (Buffer[i] < 0)
 		{
-			for (int j = i; j < count; j++)
-				Stack[j] = Stack[j + 1];
+			for (int j = i; j < count - 1; j++)
+				Buffer[j] = Buffer[j + 1];
 			count--;
 			i--;
 		}
 	}
-
-	for (int i = 0; i < count; i++)
-		cout << Stack[i] << " ";
 };
 
-void Stack::sortdiapazon(int start, int end)
+template<typename T>
+void Stack<T>::delete_elements_in_diapason(int start, int end)
 {
 	for (int i = 0; i < count; i++)
 	{
-		if ((Stack[i] >= start) && (Stack[i] <= end))
+		if ((Buffer[i] >= start) && (Buffer[i] <= end))
 		{
-			for (int j = i; j < count; j++)
+			for (int j = i; j < count - 1; j++)
 			{
-				Stack[j] = Stack[j + 1];
+				Buffer[j] = Buffer[j + 1];
 			}
 			count--;
 			i--;
 		}
 	}
-
-	for (int i = 0; i < count; i++)
-		cout << Stack[i] << " ";
 };
+#endif

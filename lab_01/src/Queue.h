@@ -1,85 +1,217 @@
-#pragma once
+#ifndef QUEUE_H
+#define QUEUE_H
+
 using namespace std;
+template<class T>
+
 class Queue
 {
 private:
-	int size = 20;
-	int count = 0;
-	int* ptr = Queue;
-	int* Queue;
+	unsigned int count{ 0 };
+	unsigned int size{ 20 };
+	T* Buffer;
 public:
-	void Buffer();
-	void push(int t1);
-	int pop();
-	int peek();
-	int countelement();
-	void sort();
-	void sortdiapazon(int start, int end);
+	Queue();
+	~Queue();
+	T pop();
+	T peek();
+	T scale();
+	void vyvod(int index);
+	void push(T t1);
+	void out();
+	void delete_minus_elements();
+	void delete_diapazon(int start, int end);
+
+	bool operator == (const Queue<T>& m2)
+	{
+		if (count == m2.count)
+		{
+			int i = 0;
+			do
+			{
+				if (Buffer[i] != m2.Buffer[i]) return false;
+				i++;
+			} while ((Buffer[i] == m2.Buffer[i]) && (i < count));
+			return true;
+		};
+		return false;
+	};
+
+	bool operator !=(const Queue<T>& m2)
+	{
+		return !(*this == m2);
+	};
+
+	bool operator > (const Queue<T>& m2)
+	{
+		int i = 0;
+		if (count >= m2.count)
+		{
+			do
+			{
+				if (Buffer[i] < m2.Buffer[i]) return false;
+				else if (Buffer[i] > m2.Buffer[i]) return true;
+				i++;
+			} while ((Buffer[i] == m2.Buffer[i]) && (i < m2.count));
+			if (count > m2.count) return true;
+			else return false;
+		}
+		else
+		{
+			do
+			{
+				if (Buffer[i] < m2.Buffer[i]) return false;
+				else if (Buffer[i] > m2.Buffer[i]) return true;
+				i++;
+			} while ((Buffer[i] == m2.Buffer[i]) && (i < m2.count));
+		}
+		return false;
+	};
+
+	bool operator < (const Queue<T>& m2)
+	{
+
+		int i = 0;
+		if (count >= m2.count)
+		{
+			do
+			{
+				if (Buffer[i] < m2.Buffer[i]) return true;
+				else if (Buffer[i] > m2.Buffer[i]) return false;
+				i++;
+			} while ((Buffer[i] == m2.Buffer[i]) && (i < m2.count));
+			if (count > m2.count) return false;
+			else return true;
+		}
+		else
+		{
+			do
+			{
+				if (Buffer[i] < m2.Buffer[i]) return true;
+				else if (Buffer[i] > m2.Buffer[i]) return false;
+				i++;
+			} while ((Buffer[i] == m2.Buffer[i]) && (i < count));
+		}
+		return true;
+	};
+
+	bool operator <= (const Queue<T>& m2)
+	{
+		return !(*this > m2);
+	};
+
+	bool operator >= (const Queue<T>& m2)
+	{
+		return !(*this < m2);
+	};
 };
 
-void Queue::Buffer()
+template <typename T>
+Queue<T>::Queue()
 {
-	Queue = new int[size];
+	Buffer = new T[size];
+};
+
+template <typename T>
+Queue<T>::~Queue()
+{
+	delete[] Buffer;
+};
+
+template<typename T>
+void Queue<T>::vyvod(int index)
+{
+	if (index > size)
+		throw std::range_error("No this element");
+	cout << Buffer[index] << " ";
 }
 
-void Queue::push(int t1)
+template<typename T>
+void Queue<T>::out()
 {
-	Queue[count] = t1;
-	cout << Queue[count] << " ";
+	for (int i = 0; i < count; i++)
+		cout << Buffer[i] << " ";
+	cout << endl;
+};
+
+template <typename T>
+void Queue<T>::push(T t1)
+{
+	if (size == count)
+		size++;
+	T* Array;
+	Array = new T[size];
+	for (int i = 0; i < size; i++)
+		Array[i] = Buffer[i];
+	delete[] Buffer;
+	Array[count] = t1;
+	Buffer = Array;
 	count++;
 };
 
-int Queue::pop()
+template <typename T>
+T Queue<T>::pop()
 {
-	if (size < 1)
-		throw std::range_error("Выход за пределы массива");
-	size--;
+	if (size > 0)
+	{
+		size--;
+		T* Array;
+		Array = new T[size];
+		for (int i = 0; i < size; i++)
+			Array[i] = Buffer[i];
+		delete[] Buffer;
+		Buffer = Array;
+	}
+	else throw std::out_of_range("Queue: empty");
 	count--;
-	return Queue[0];
+	return Buffer[count];
 };
 
-int Queue::peek()
+template <typename T>
+T Queue<T>::peek()
 {
-	return Queue[count];
+	if (count > 0)
+	{
+		return Buffer[count];
+	}
+	else std::out_of_range("Queue: empty");
 };
 
-int Queue::countelement()
+template <typename T>
+T Queue<T>::scale()
 {
 	return count;
 }
 
-void Queue::sort()
+template <typename T>
+void Queue<T>::delete_minus_elements()
 {
 	for (int i = 0; i < count; i++)
 	{
-		if (Queue[i] < 0)
+		if (Buffer[i] < 0)
 		{
-			for (int j = i; j < count; j++)
-				Queue[j] = Queue[j + 1];
+			for (int j = i; j < count - 1; j++)
+				Buffer[j] = Buffer[j + 1];
 			count--;
 			i--;
 		}
 	}
-
-	for (int i = 0; i < count; i++)
-		cout << Queue[i] << " ";
 };
 
-void Queue::sortdiapazon(int start, int end)
+template <typename T>
+void Queue<T>::delete_diapazon(int start, int end)
 {
 	for (int i = 0; i < size; i++)
 	{
-		if ((Queue[i] >= start) && (Queue[i] <= end))
+		if ((Buffer[i] >= start) && (Buffer[i] <= end))
 		{
-			for (int j = i; j < count; j++)
+			for (int j = i; j < count - 1; j++)
 			{
-				Queue[j] = Queue[j + 1];
+				Buffer[j] = Buffer[j + 1];
 			}
 			count--;
 			i--;
 		}
 	}
-
-	for (int i = 0; i < count; i++)
-		cout << Queue[i] << " ";
 };
+#endif

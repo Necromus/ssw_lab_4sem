@@ -2,143 +2,147 @@
 #define VECTOR_H
 
 using namespace std;
-
 template <class T>
+
 class Vector
 {
 private:
-	unsigned int count { 0 };
-	unsigned int size { 20 };
-	T*Buffer;
+	int count = 0;
+	int sizes;
+	T*Vector1;
 public:
 	Vector();
 	~Vector();
-	T pop();
-	T& at(unsigned int index);
-	T scale();
-	T peek();
-	void vyvod(int index);
 	void push(T t1);
-	void out();
+	T pop();
 	void delete_minus_elements();
-	void delete_elements_in_diapason(int start, int end);
+	T& at(int index);
+	T size();
+	T peek();
+	void delete_diapazon(int start, int end);
+	void out();
 	
-	bool operator == (const Vector<T>& m2)
+
+	friend bool operator == (const Vector<T>& vec1, const Vector<T>& vec2)
 	{
-		if (count == m2.count)
+		if (vec1.count == vec2.count)
 		{
 			int i = 0;
 			do
 			{
-				if (Buffer[i] != m2.Buffer[i]) return false;
+				if (vec1.Vector1[i] != vec2.Vector1[i])
+					return false;
 				i++;
-			} while ((Buffer[i] == m2.Buffer[i]) && (i < count));
+			} while ((vec1.Vector1[i] == vec2.Vector1[i]) && (i < vec1.count));
 			return true;
-		};
-		return false;
-	};
-
-	bool operator !=(const Vector<T>& m2)
-	{
-		return !(*this == m2);
-	};
-
-	bool operator > (const Vector<T>& m2)
-	{
-		int i = 0;
-		if (count >= m2.count)
-		{
-			do
-			{
-				if (Buffer[i] < m2.Buffer[i]) return false;
-				else if (Buffer[i] > m2.Buffer[i]) return true;
-				i++;
-			} while ((Buffer[i] == m2.Buffer[i]) && (i < (m2.count - 1)));
-			if (count > m2.count) return true;
-			else return false;
-		}
-		else
-		{
-			do
-			{
-				if (Buffer[i] < m2.Buffer[i]) return false;
-				else if (Buffer[i] > m2.Buffer[i]) return true;
-				i++;
-			} while ((Buffer[i] == m2.Buffer[i]) && (i < m2.count));
 		}
 		return false;
 	};
 
-	bool operator < (const Vector<T>& m2)
+	friend bool operator != (const Vector<T>& vec1, const Vector<T>& vec2)
 	{
+		return !(vec1 == vec2);
+	};
 
+	friend bool operator > (const Vector<T>& vec1, const Vector<T>& vec2)
+	{
 		int i = 0;
-		if (count >= m2.count)
+		if (vec1.count >= vec2.count)
 		{
 			do
 			{
-				if (Buffer[i] < m2.Buffer[i]) return true;
-				else if (Buffer[i] > m2.Buffer[i]) return false;
+				if (vec1.Vector1[i] < vec2.Vector1[i])
+					return false;
+				else if (vec1.Vector1[i] > vec2.Vector1[i])
+					return true;
 				i++;
-			} while ((Buffer[i] == m2.Buffer[i]) && (i < m2.count));
-			if (count > m2.count) return false;
-			else return true;
+			} while ((vec1.Vector1[i] == vec2.Vector1[i]) && (i < vec2.count));
+			if (vec1.count > vec2.count)
+				return true;
 		}
-		else
+		i = 0;
+		if (vec1.count < vec2.count)
 		{
 			do
 			{
-				if (Buffer[i] < m2.Buffer[i]) return true;
-				else if (Buffer[i] > m2.Buffer[i]) return false;
+				if (vec1.Vector1[i] < vec2.Vector1[i])
+					return false;
+				else if (vec1.Vector1[i] > vec2.Vector1[i])
+					return true;
 				i++;
-			} while ((Buffer[i] == m2.Buffer[i]) && (i < count));
+			} while ((vec1.Vector1[i] == vec2.Vector1[i]) && (i < vec1.count));
 		}
-		return true;
+		return false;
 	};
 
-	bool operator <= (const Vector<T>& m2)
+	friend bool operator < (const Vector<T>& vec1, const Vector<T>& vec2)
 	{
-		return !(*this > m2);
+		int i = 0;
+		if (vec1.count >= vec2.count)
+		{
+			do
+			{
+				if (vec1.Vector1[i] < vec2.Vector1[i])
+					return true;
+				else if (vec1.Vector1[i] > vec2.Vector1[i])
+					return false;
+				i++;
+			} while ((vec1.Vector1[i] == vec2.Vector1[i]) && (i < vec2.count));
+		}
+		i = 0;
+		if (vec1.count <= vec2.count)
+		{
+			do
+			{
+				if (vec1.Vector1[i] < vec2.Vector1[i])
+					return true;
+				else if (vec1.Vector1[i] > vec2.Vector1[i])
+					return false;
+				i++;
+			} while ((vec1.Vector1[i] == vec2.Vector1[i]) && (i < vec1.count));//ошибка
+			if (vec1.count < vec2.count)
+				return true;
+		}
+		return false;
 	};
 
-	bool operator >= (const Vector<T>& m2)
+	friend bool operator <= (const Vector<T>& vec1, const Vector<T>& vec2)
 	{
-		return !(*this < m2);
+		return !(vec1 > vec2);
 	};
-
+	
+	friend bool operator >= (const Vector<T>& vec1, const Vector<T>& vec2)
+	{
+		return !(vec1 < vec2);
+	};
+	
 };
 
 template <typename T>
 Vector<T>::Vector()
 {
-	Buffer = new T[size];
+	sizes = 0;
+	Vector1 = new T [0];
 };
 
 template <typename T>
 Vector<T>::~Vector()
 {
-	delete[] Buffer;
+	delete[] Vector1;
 };
 
-template<typename T>
-void Vector<T>::vyvod(int index)
-{
-	if (index > size)
-		throw std::range_error("No this element");
-	cout << Buffer[index] << " ";
-}
 template <typename T>
 void Vector<T>::push(T t1)
 {
-	if (size == count)
-		size++;
-	T* Array;
-	Array = new T[size];
-	for (int i = 0; i < size; i++)
-		Array[i] = Buffer[i];
-	delete[] Buffer;
-	Array[count] = t1;
-	Buffer = Array;
+	T* p1;
+	p1 = new T[sizes + 1];
+	for (int i = 0; i < sizes; i++)
+		p1[i] = Vector1[i];
+	p1[sizes] = 0;
+	delete[] Vector1;
+	Vector1 = p1;
+	sizes++;
+	Vector1[count] = t1;
 	count++;
 };
 
@@ -146,33 +150,32 @@ template<typename T>
 void Vector<T>::out()
 {
 	for (int i = 0; i < count; i++)
-		cout << Buffer[i] << " ";
+		cout << Vector1[i] << " ";
 	cout << endl;
 };
 
 template <typename T>
 T Vector<T>::pop()
 {
-	if (size > 0)
+	if (sizes > 0)
 	{
-		size--;
-		T* Array;
-		Array = new T[size];
-		for (int i = 0; i < size; i++)
-			Array[i] = Buffer[i];
-		delete[] Buffer;
-		Buffer = Array;
+		T* p2;
+		p2 = new T[sizes - 1];
+		for (int i = 0; i < sizes - 1; i++)
+			p2[i] = Vector1[i];
+		delete[] Vector1;
+		Vector1 = p2;
+		sizes--;
 	}
 	else throw std::out_of_range("vector: empty");
 	count--;
-	return Buffer[count];
 };
 
 template <typename T>
-T& Vector<T>::at(unsigned int index)
+T& Vector<T>::at(int index)
 {
 	if ((index < count) && (index >= 0))
-		return Buffer[index];
+		return Vector1[index];
 	else throw std::range_error("vector: out of range");	
 };
 
@@ -181,13 +184,13 @@ T Vector<T>::peek()
 {
 	if (count > 0)
 	{
-		return Buffer[count];
+		return Vector1[count];
 	}
 	else throw std::out_of_range("vector: empty");
 };
 
 template <typename T>
-T Vector<T>::scale()
+T Vector<T>::size()
 {
 	return count;
 };
@@ -197,10 +200,10 @@ void Vector<T>::delete_minus_elements()
 {
 	for (int i = 0; i < count; i++)
 	{
-		if (Buffer[i] < 0)
+		if (Vector1[i] < 0)
 		{
 			for (int j = i; j < count - 1; j++)
-				Buffer[j] = Buffer[j + 1];
+				Vector1[j] = Vector1[j + 1];
 			count--;
 			i--;
 		}
@@ -208,15 +211,15 @@ void Vector<T>::delete_minus_elements()
 };
 
 template <typename T>
-void Vector<T>::delete_elements_in_diapason(int start, int end)
+void Vector<T>::delete_diapazon(int start, int end)
 {
 	for (int i = 0; i < count; i++)
 	{
-		if ((Buffer[i] >= start) && (Buffer[i] <= end))
+		if ((Vector1[i] >= start) && (Vector1[i] <= end))
 		{
 			for (int j = i; j < count - 1; j++)
 			{
-				Buffer[j] = Buffer[j + 1];
+				Vector1[j] = Vector1[j + 1];
 			}
 			count--;
 			i--;
